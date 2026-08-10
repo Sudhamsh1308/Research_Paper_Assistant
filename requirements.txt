@@ -1,0 +1,10 @@
+loguru
+langchain
+langchain-community
+langchain-core
+pymupdf
+sentence-transformers
+chromadb
+google-genai
+streamlit
+python-dotenv

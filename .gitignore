@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv
+
+######
+.env
+uploads/
+vectorstore/
+logs/
+notebooks/
+node_modules/
+package-lock.json
+package.json 
+test.py
+uv.lock   
+
+
+*.db
+*.sqlite
+vector_db/
