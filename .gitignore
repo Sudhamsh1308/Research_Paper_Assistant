@@ -16,7 +16,7 @@ package-lock.json
 package.json 
 test.py
 uv.lock   
-
+researchpaperassistant
 
 *.db
 *.sqlite
