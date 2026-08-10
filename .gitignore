@@ -8,7 +8,6 @@ __pycache__/
 ######
 .env
 uploads/
-vectorstore/
 logs/
 notebooks/
 node_modules/
