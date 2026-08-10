@@ -127,9 +127,9 @@ with st.sidebar:
 
             st.session_state.processed = True
 
-            st.session_state.selected_paper = (
-                files[0].name
-            )
+            # Select first paper only if nothing is selected
+            if st.session_state.selected_paper is None:
+                st.session_state.selected_paper = files[0].name
 
             st.success(
                 f"{len(files)} paper(s) processed!"
@@ -148,41 +148,23 @@ with st.sidebar:
 
         selected = st.selectbox(
             "Select a paper",
-            list(
-                st.session_state.papers.keys()
-            )
+            list(st.session_state.papers.keys())
         )
 
-        # Only rerun when paper changes
         if selected != st.session_state.selected_paper:
 
             st.session_state.selected_paper = selected
 
             if selected not in st.session_state.chat_history:
 
-                st.session_state.chat_history[
-                    selected
-                ] = []
+                st.session_state.chat_history[selected] = []
 
             st.rerun()
 
 
-        # ------------------ CURRENT CHAT ------------------
+    # ------------------ CLEAR CHAT ------------------
 
-        paper_id = st.session_state.selected_paper
-
-        if paper_id not in st.session_state.chat_history:
-
-            st.session_state.chat_history[
-                paper_id
-            ] = []
-
-        messages = st.session_state.chat_history[
-            paper_id
-        ]
-
-
-        # ------------------ CLEAR CHAT ------------------
+    if st.session_state.selected_paper:
 
         if st.button(
             "🗑️ Clear Chat",
@@ -190,11 +172,29 @@ with st.sidebar:
         ):
 
             st.session_state.chat_history[
-                paper_id
+                st.session_state.selected_paper
             ] = []
 
             st.rerun()
 
+
+# ------------------ CURRENT PAPER CHAT ------------------
+
+paper_id = st.session_state.selected_paper
+
+messages = []
+
+if paper_id:
+
+    if paper_id not in st.session_state.chat_history:
+
+        st.session_state.chat_history[
+            paper_id
+        ] = []
+
+    messages = st.session_state.chat_history[
+        paper_id
+    ]
 
 # ------------------ MAIN AREA ------------------
 
