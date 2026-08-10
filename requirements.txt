@@ -8,3 +8,4 @@ chromadb
 google-genai
 streamlit
 python-dotenv
+langchain-text-splitters
