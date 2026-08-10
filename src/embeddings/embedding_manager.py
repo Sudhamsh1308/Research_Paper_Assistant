@@ -54,7 +54,9 @@ Content:
 
         embedding = self.model.encode(
             query,
-            convert_to_numpy=True
+            convert_to_numpy=True,
+            batch_size=32,
+            show_progress_bar=False
         )
 
         return embedding
