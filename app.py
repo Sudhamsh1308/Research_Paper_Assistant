@@ -180,21 +180,15 @@ with st.sidebar:
 
 # ------------------ CURRENT PAPER CHAT ------------------
 
-paper_id = st.session_state.selected_paper
+    paper_id = st.session_state.selected_paper
 
-messages = []
+    messages = []
 
-if paper_id:
+    if paper_id:
+        if paper_id not in st.session_state.chat_history:
+            st.session_state.chat_history[paper_id] = []
 
-    if paper_id not in st.session_state.chat_history:
-
-        st.session_state.chat_history[
-            paper_id
-        ] = []
-
-    messages = st.session_state.chat_history[
-        paper_id
-    ]
+        messages = st.session_state.chat_history[paper_id]
 
 # ------------------ MAIN AREA ------------------
 
