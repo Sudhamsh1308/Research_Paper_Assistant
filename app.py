@@ -134,7 +134,7 @@ with st.sidebar:
             st.success(
                 f"{len(files)} paper(s) processed!"
             )
-
+            st.rerun()
 
     # ------------------ PAPER SELECTION ------------------
 
@@ -156,7 +156,8 @@ with st.sidebar:
             if selected not in st.session_state.chat_history:
 
                 st.session_state.chat_history[selected] = []
-
+                
+                st.rerun()
 
 
     # ------------------ CLEAR CHAT ------------------
