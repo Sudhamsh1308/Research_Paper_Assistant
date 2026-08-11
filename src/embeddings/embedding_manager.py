@@ -11,7 +11,7 @@ class EmbeddingManager:
 
         logger.info("Loading Embedding Model...")
 
-        self.model = SentenceTransformer(EMBEDDING_MODEL)
+        self.model = SentenceTransformer(EMBEDDING_MODEL,device="cpu")
 
         logger.info("Embedding Model Loaded.")
 
