@@ -135,8 +135,6 @@ with st.sidebar:
                 f"{len(files)} paper(s) processed!"
             )
 
-            st.rerun()
-
 
     # ------------------ PAPER SELECTION ------------------
 
@@ -159,7 +157,6 @@ with st.sidebar:
 
                 st.session_state.chat_history[selected] = []
 
-            st.rerun()
 
 
     # ------------------ CLEAR CHAT ------------------
@@ -192,7 +189,7 @@ with st.sidebar:
 
 # ------------------ MAIN AREA ------------------
 
-if not st.session_state.processed:
+if not st.session_state.papers:
 
     st.info(
         "Upload a research paper from the sidebar "
