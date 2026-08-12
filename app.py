@@ -310,10 +310,3 @@ else:
     
                         st.divider()
 
-        # ------------------ IMPORTANT ------------------
-        # DO NOT call st.rerun() here.
-        #
-        # Streamlit will rerun automatically when the
-        # chat input/button interaction finishes.
-        # The messages are already stored in session_state.
-        # ------------------------------------------------
