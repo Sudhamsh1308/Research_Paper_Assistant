@@ -176,44 +176,36 @@ with st.sidebar:
             st.rerun()
 
 
-# ------------------ CURRENT PAPER CHAT ------------------
-
-    paper_id = st.session_state.selected_paper
-
-    messages = []
-
-    if paper_id:
-        if paper_id not in st.session_state.chat_history:
-            st.session_state.chat_history[paper_id] = []
-
-        messages = st.session_state.chat_history[paper_id]
-
-# ------------------ MAIN AREA ------------------
+    # ------------------ MAIN AREA ------------------
 
 if not st.session_state.papers:
-
     st.info(
         "Upload a research paper from the sidebar "
         "to start."
     )
-
 else:
-
     st.subheader(
-             f"📖 {st.session_state.selected_paper}")
+        f"📖 {st.session_state.selected_paper}"
+    )
 
     st.divider()
+
+    # ------------------ CURRENT CHAT ------------------
+
+    paper_id = st.session_state.selected_paper
+
+    if paper_id not in st.session_state.chat_history:
+        st.session_state.chat_history[paper_id] = []
+
+    messages = st.session_state.chat_history[paper_id]
 
     # ------------------ SUGGESTED QUESTIONS ------------------
 
     if not messages:
-
         st.write("### What would you like to know?")
-
         col1, col2 = st.columns(2)
 
         with col1:
-
             if st.button(
                 "💡 What is the main idea?",
                 use_container_width=True
@@ -221,8 +213,6 @@ else:
                 st.session_state.pending_question = (
                     "What is the main idea of this paper?"
                 )
-                st.rerun()
-
 
             if st.button(
                 "📊 What are the main results?",
@@ -231,21 +221,15 @@ else:
                 st.session_state.pending_question = (
                     "What are the main results of this paper?"
                 )
-                st.rerun()
-
 
         with col2:
-
             if st.button(
                 "🔬 Explain the methodology",
                 use_container_width=True
             ):
                 st.session_state.pending_question = (
-                    "Explain the methodology used in this paper."
+                "Explain the methodology used in this paper."
                 )
-                st.rerun()
-
-
             if st.button(
                 "🎯 What are the key contributions?",
                 use_container_width=True
@@ -253,58 +237,83 @@ else:
                 st.session_state.pending_question = (
                     "What are the key contributions of this paper?"
                 )
-                st.rerun()
-
 
         st.divider()
 
 
+    # ------------------ CHAT INPUT ------------------
 
-    # Show previous messages
-    for message in messages:
-
-        with st.chat_message(message["role"]):
-
-            st.markdown(message["content"])
-
-            if message.get("sources"):
-                with st.expander(
-                      f"📑 Sources ({len(message['sources'])})"):
-                    for source in message["sources"]:
-                        st.markdown(
-                                 f"**📄 Page {source['page']}** "
-                                 f"• **{source['section']}**")
-
-                        st.caption(source["text"])
-                        st.divider()
-
-    # Chat input
     question = st.chat_input(
-    "Ask something about the paper..."
-)
+        "Ask something about the paper...")
 
+    # ------------------ SUGGESTED QUESTION ------------------
 
-# Check if user clicked a suggested question
     if st.session_state.pending_question:
         question = st.session_state.pending_question
         st.session_state.pending_question = None
 
+    # ------------------ PROCESS QUESTION ------------------
+
     if question:
+        # Add user message
         messages.append({
         "role": "user",
-        "content": question
-    })
+        "content": question})
 
+        # Generate answer
         with st.spinner("Thinking..."):
-            response = pipeline.ask(
-            question,
-            st.session_state.selected_paper
-        )
+            try:
+                response = pipeline.ask(
+                question,
+                st.session_state.selected_paper)
 
+                answer = response.get(
+                "answer",
+                "I could not generate an answer.")
+
+                sources = response.get(
+                    "sources",
+                    []
+                )
+
+            except Exception as e:
+                answer = (
+                f"❌ Error while generating answer:\n\n"
+                f"`{str(e)}`"
+            )
+
+                sources = []
+
+       # Add assistant message
         messages.append({
         "role": "assistant",
-        "content": response["answer"],
-        "sources": response.get("sources", [])
-    })
+        "content": answer,
+        "sources": sources})
 
-        st.rerun()
+
+    # ------------------ SHOW CHAT HISTORY ------------------
+    
+    for message in messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+            if message.get("sources"):
+                with st.expander(
+                    f"📑 Sources ({len(message['sources'])})"
+                    ):
+                    for source in message["sources"]:
+                        st.markdown(
+                            f"**📄 Page {source.get('page', 'Unknown')}** "
+                            f"• **{source.get('section', 'Unknown')}**"
+                        )
+                        if source.get("text"):
+                            st.caption(source["text"])
+    
+                        st.divider()
+
+        # ------------------ IMPORTANT ------------------
+        # DO NOT call st.rerun() here.
+        #
+        # Streamlit will rerun automatically when the
+        # chat input/button interaction finishes.
+        # The messages are already stored in session_state.
+        # ------------------------------------------------
