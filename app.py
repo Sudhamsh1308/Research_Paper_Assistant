@@ -134,9 +134,7 @@ with st.sidebar:
             st.success(
                 f"{len(files)} paper(s) processed!"
             )
-
             st.rerun()
-
 
     # ------------------ PAPER SELECTION ------------------
 
@@ -158,8 +156,8 @@ with st.sidebar:
             if selected not in st.session_state.chat_history:
 
                 st.session_state.chat_history[selected] = []
-
-            st.rerun()
+                
+                st.rerun()
 
 
     # ------------------ CLEAR CHAT ------------------
@@ -192,7 +190,7 @@ with st.sidebar:
 
 # ------------------ MAIN AREA ------------------
 
-if not st.session_state.processed:
+if not st.session_state.papers:
 
     st.info(
         "Upload a research paper from the sidebar "
@@ -292,38 +290,21 @@ else:
         st.session_state.pending_question = None
 
     if question:
+        messages.append({
+        "role": "user",
+        "content": question
+    })
+
+        with st.spinner("Thinking..."):
+            response = pipeline.ask(
+            question,
+            st.session_state.selected_paper
+        )
 
         messages.append({
-            "role": "user",
-            "content": question
-        })
+        "role": "assistant",
+        "content": response["answer"],
+        "sources": response.get("sources", [])
+    })
 
-        with st.chat_message("user"):
-            st.write(question)
-
-        with st.chat_message("assistant"):
-
-            with st.spinner("Thinking..."):
-
-                response = pipeline.ask(question,st.session_state.selected_paper)
-
-            st.markdown(response["answer"])
-
-            sources = response.get("sources", [])
-
-            if sources:
-                with st.expander(
-                           f"📑 Sources ({len(sources)})"):
-                    for source in sources:
-                        st.markdown(
-                                f"**📄 Page {source['page']}** "
-                                f"• **{source['section']}**")
-
-                        st.caption(source["text"])
-                        st.divider()
-
-            messages.append({
-                "role": "assistant",
-                "content": response["answer"],
-                "sources": sources
-            })
+        st.rerun()
